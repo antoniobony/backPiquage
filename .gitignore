@@ -23,6 +23,9 @@ backup/
 backups/
 dumps/
 
+# --- Dépendances (voir remarque ci-dessous) ---
+# vendor/
+node_modules/
 
 # --- Fichiers système et éditeurs ---
 .DS_Store
