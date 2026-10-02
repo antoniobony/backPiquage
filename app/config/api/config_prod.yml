@@ -1,0 +1,31 @@
+imports:
+    - { resource: config.yml }
+
+#doctrine:
+#    orm:
+#        metadata_cache_driver: apc
+#        result_cache_driver: apc
+#        query_cache_driver: apc
+
+monolog:
+    handlers:
+        # Use fingers_crossed to buffer until error level reaches
+        error_buffer:
+            type: fingers_crossed
+            action_level: error
+            handler: all_logging
+         # Group handler to direct logs to multiple destinations. Order file logging first to ensure error is logged even if db is not available
+        all_logging:
+            type: group
+            members: [file_logging, database_logging]
+        # File logging with rotation
+        file_logging:
+            type: rotating_file
+            path: '%kernel.logs_dir%/api.log'
+            level: '%csweb_log_level%'
+        console:
+            type: console
+            process_psr_3_messages: false
+        db:
+            type: service
+            id: cspro_monolog_handler

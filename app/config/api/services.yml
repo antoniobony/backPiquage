@@ -1,0 +1,110 @@
+# Learn more about services, parameters and containers at
+# https://symfony.com/doc/current/service_container.html
+parameters:
+    #parameter_name: value
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+        bind:
+          $env: '%kernel.environment%'
+          $timeZone: '%csweb_api_default_timezone%'
+          $apiSchemaVersion: '%csweb_api_schema_version%'
+
+
+        # this means you cannot fetch services directly from the container via $container->get()
+        # if you need to do this, you can override this setting on individual services
+        public: false
+
+    # makes classes in src/App available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../../../src/*'
+        # you can exclude directories or files
+        # but if a service is unused, it's removed anyway
+        exclude: '../../../src/{Entity,Repository,Tests,version.php,config.php,Controller/ui,Service/HttpHelper.php}'
+
+    # controllers are imported separately to make sure they're public
+    # and have a tag that allows actions to type-hint services
+    App\Controller\api\:
+        resource: '../../../src/Controller/api'
+        public: true
+        tags: ['controller.service_arguments']
+
+    # add more services, or override services that need manual wiring
+    # App\Service\ExampleService:
+    #     arguments:
+    #         $someArgument: 'some_value'
+    #UI - guzzle client service for invoking api endpoints
+    GuzzleHttp\Client:
+        arguments:
+            -
+              http_errors: false
+    
+  
+    #OAuthHelperService
+    App\Service\OAuthHelper:
+        public: true
+        arguments:
+            $database_host: "%database_host%"
+            $database_name: "%database_name%"
+            $database_user: "%database_user%"
+            $database_password: "%database_password%"
+    #PdoService
+    App\Service\PdoHelper:
+        public: true
+        arguments:
+            $database_host: "%database_host%"
+            $database_name: "%database_name%"
+            $database_user: "%database_user%"
+            $database_password: "%database_password%"
+    #Monolog DB Handler
+    cspro_monolog_handler:
+        class: App\Service\CSProMySQLHandler
+        autowire: true
+        public: true
+        arguments:
+            $level: "%csweb_db_log_level%"
+
+     #ApiKeyUserProvider 
+    App\Security\ApiKeyUserProvider:
+        public: true
+   
+    #ApiAccessDeniedHandler 
+    App\Security\ApiAccessDeniedHandler:
+        public: true
+
+    #FileSecurityValidator
+    App\CSPro\FileManager\FileSecurityValidator:
+        arguments:
+            $mimeTypes: null
+    
+    #LoginVoter
+    App\Security\LoginVoter:
+        tags: ['security.voter']
+        public: true
+        
+    #DictionaryVoter
+    App\Security\DictionaryVoter:
+        tags: ['security.voter']
+        public: true
+    
+    #UserVoter
+    App\Security\UserVoter:
+        tags: ['security.voter']
+        public: true
+        
+    #AppsVoter
+    App\Security\AppsVoter:
+        tags: ['security.voter']
+        public: true
+    
+    #ExceptionListener
+    App\EventListener\ExceptionListener:
+        tags: 
+            - { name: 'kernel.event_listener', event: 'kernel.exception' }
+        public: true

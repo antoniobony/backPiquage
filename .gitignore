@@ -1,0 +1,32 @@
+# --- Secrets et configuration locale ---
+.env
+.env.*
+*.local.php
+config.local.*
+
+# --- Données générées par CSWeb (gérées par le disque persistant) ---
+files/
+var/cache/
+var/logs/
+var/sessions/
+*.log
+
+# --- Données CSPro (jamais dans Git) ---
+*.csdb
+*.dcf
+*.pen
+*.pff
+*.zip
+*.sql
+*.sql.gz
+backup/
+backups/
+dumps/
+
+
+# --- Fichiers système et éditeurs ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

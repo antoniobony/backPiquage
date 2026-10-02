@@ -1,0 +1,55 @@
+imports:
+    - { resource: config.yml }
+
+framework:
+    router:
+        resource: '%kernel.project_dir%/app/config/routing_dev.yml'
+        strict_requirements: true
+    profiler: { only_exceptions: false }
+
+web_profiler:
+    toolbar: true
+    intercept_redirects: false
+
+monolog:
+    channels: ['command']
+    handlers:
+        # Directly log everything for development. In dev mode level is set to debug does not use the parameter csweb_log_level
+        file_logging:
+            type: stream
+            path: '%kernel.logs_dir%/ui.%kernel.environment%.log'
+            level: debug
+            channels: ['!event', '!command']
+        console:
+            type: console
+            process_psr_3_messages: true
+            level: debug
+            channels: ['!event', '!doctrine', '!console']
+        # Database logging as usual, for consistency with base.uses the log level set in the paramaters
+        database_logging:
+            type: service
+            id: cspro_monolog_handler
+            channels: ['!command']
+        blob_break_logging:
+            type: rotating_file
+            path: '%kernel.logs_dir%/cases_process.%kernel.environment%.log'
+            level: debug
+            channels: ["command"]
+                    
+        # To follow logs in real time, execute the following command:
+        # `bin/console server:log -vv`
+        server_log:
+            type: server_log
+            process_psr_3_messages: false
+            host: 127.0.0.1:9911
+        # uncomment to get logging in your browser
+        # you may have to allow bigger header sizes in your Web server configuration
+        #firephp:
+        #    type: firephp
+        #    level: info
+        #chromephp:
+        #    type: chromephp
+        #    level: info
+
+#swiftmailer:
+#    delivery_addresses: ['me@example.com']
