@@ -16,7 +16,7 @@ DirectoryIndex app.php
 # CORS
 # =========================
 <IfModule mod_headers.c>
-    Header always set Access-Control-Allow-Origin "http://localhost:3000"
+    Header always set Access-Control-Allow-Origin  getenv('FRONTEND_URL') ?:"http://localhost:3000"
     Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
     Header always set Access-Control-Allow-Headers "Origin, Content-Type, Accept, Authorization, X-Requested-With"
     Header always set Access-Control-Allow-Credentials "true"
